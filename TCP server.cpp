@@ -24,6 +24,8 @@
 #include "Client.h"
 #include "CitySimylator.h"
 #include "Commands\LOGIN_LIMIT.cpp"
+#include "Commands\CHECK_IP.cpp"
+#include "Util\read.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
 #define DEFAULT_BUFLEN 512
@@ -33,35 +35,6 @@ int recvbuflen = DEFAULT_BUFLEN;
 int conn=0;
 int cityID;
 using namespace std;
-int leerr(SOCKET s,char *recvbuf)
-{
-	SOCKET clisock=s;
-	int iResult=0;
-	int recvbuflen=DEFAULT_BUFLEN;
-	iResult=recv(clisock,recvbuf,recvbuflen,0);
-		if (iResult==SOCKET_ERROR) 
-		{
-			if (WSAGetLastError()==WSAETIMEDOUT) 
-			{
-				cout << "Timeout. More than 10 seconds passed since last receive block was received. Disconnecting." << endl;
-				closesocket(clisock);
-				return 1;
-			}
-			else 
-			{
-				if (WSAGetLastError()==10053L) 
-				{
-					cout << "The client closed the connection unexpectedly (without sending 'BYE'). Disconnecting." << endl;
-					closesocket(clisock);
-					return 1;
-				}
-				cout << "An error ocurred while receiving data from client:" << WSAGetLastError() << ". Disconnecting." << endl;
-				closesocket(clisock);
-				return 1;
-			}
-		}
-	return 0;
-}
 unsigned __stdcall ClientSession(void* data)
 {
 	char recvbuf[DEFAULT_BUFLEN];
@@ -74,7 +47,7 @@ unsigned __stdcall ClientSession(void* data)
 	{
 	RtlZeroMemory(&recvbuf,sizeof(recvbuf));
 	setsockopt(clisock,SOL_SOCKET,SO_RCVTIMEO,(char *)&milliseconds,sizeof(milliseconds));
-    iResult = leerr(clisock,recvbuf);
+	iResult = leerr::leer(clisock,recvbuf);
 	if (iResult == 1)
 	{
 		--conn;
@@ -90,87 +63,8 @@ unsigned __stdcall ClientSession(void* data)
 		--conn;
 		break;
 	}
-	else if (strcmp(recvbuf,"LOGIN_LIMIT")==0) {
-		run_LOGIN_LIMIT(clisock);
-	}
-	else if (strcmp(recvbuf,"CHECK_IP")==0)
-	{
-		char buff[DEFAULT_BUFLEN]="OK";
-		send(clisock,buff,sizeof(buff),0);
-		ZeroMemory(&recvbuf,sizeof(recvbuf));
-		iResult=recv(clisock,recvbuf,recvbuflen,0);
-		if (iResult==SOCKET_ERROR) 
-		{
-			if (WSAGetLastError()==WSAETIMEDOUT) 
-			{
-				cout << "Timeout. More than 10 seconds passed since last receive block was received. Disconnecting." << endl;
-				closesocket(clisock);
-				--conn;
-				goto je;
-			}
-			else 
-			{
-				if (WSAGetLastError()==10053L) 
-				{
-					cout << "The client closed the connection unexpectedly (without sending 'BYE'). Disconnecting." << endl;
-					closesocket(clisock);
-					--conn;
-					goto je;
-				}
-				cout << "An error ocurred while receiving data from client:" << WSAGetLastError() << ". Disconnecting." << endl;
-				closesocket(clisock);
-				--conn;
-				goto je;
-			}
-		}
-		string datos=recvbuf;
-		sql::Driver *driver;
-		sql::Connection *conn;
-		sql::Statement *stmt;
-		sql::ResultSet *rst;
-		driver=sql::mysql::get_mysql_driver_instance();
-		conn=driver->connect("localhost","root","power500");
-		conn->setSchema("wars");
-		stmt=conn->createStatement();
-		rst=stmt->executeQuery("SELECT * FROM ips");
-		rst->first();
-		bool used=false;
-		int ipnumber=0;
-		if (rst->rowsCount()==0) goto salto;
-		do
-		{
-
-			if (rst->getString("IPAddress").compare(datos))
-			{
-				used=true;
-				ipnumber=rst->getInt("NumberOfAccounts");
-				break;
-			}
-		} while (rst->next());
-salto:
-		if (used==false)
-		{
-			char buff[DEFAULT_BUFLEN]="YES";
-			send(clisock,buff,sizeof(buff),0);
-		}
-		if (used==true)
-		{
-			rst=stmt->executeQuery("SELECT * FROM options");
-			rst->first();
-			int limite;
-			limite=rst->getInt("LimitIpAddresses");
-			if (ipnumber >= limite)
-			{
-				char buff[DEFAULT_BUFLEN]="NO";
-				send(clisock,buff,sizeof(buff),0);
-			}
-			else
-			{
-				char buff[DEFAULT_BUFLEN]="YES";
-				send(clisock,buff,sizeof(buff),0);
-			}
-		}
-	}
+	else if (strcmp(recvbuf,"LOGIN_LIMIT")==0) run_LOGIN_LIMIT(clisock);
+	else if (strcmp(recvbuf,"CHECK_IP")==0) run_CHECK_IP(clisock,recvbuf);
 	else if (strcmp(recvbuf,"REGISTER")==0)
 	{
 		iResult=registro::registre(clisock);
@@ -181,7 +75,7 @@ salto:
 		char buff[255]="OK";
 		send(clisock,buff,sizeof(buff),0);
 		ZeroMemory(&recvbuf,sizeof(recvbuf));
-		int iResult=leerr(clisock,recvbuf); if (iResult==1) {--conn;break;}
+		int iResult=leerr::leer(clisock,recvbuf); if (iResult==1) {--conn;break;}
 		string datos=recvbuf;
 		sql::Driver *driver;
 		sql::Connection *conn;
@@ -234,10 +128,10 @@ salto:
 			ZeroMemory(readbuffer,sizeof(readbuffer));
 			send(clisock,buffer,sizeof(buffer),0);
 			ZeroMemory(recvbuf,sizeof(recvbuf));
-			leerr(clisock,recvbuf);
+			leerr::leer(clisock,recvbuf);
 			string username = recvbuf;
 			ZeroMemory(recvbuf,sizeof(recvbuf));
-			leerr(clisock,recvbuf);
+			leerr::leer(clisock,recvbuf);
 			string pasword = recvbuf;
 			sql::Driver *driver;
 			sql::Connection *conn;
@@ -280,7 +174,7 @@ salto:
 			char enviaelfinal[5] = "END";
 			send(clisock,enviaelfinal,sizeof(enviaelfinal),0);
 			RtlZeroMemory(recvbuf,sizeof(recvbuf));
-			int okvar = leerr(clisock,recvbuf);
+			int okvar = leerr::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0 || okvar == 1)
 			{
 				std::cout << "Client didn't send the OK after sending all the city data. Closing connection.";
@@ -308,7 +202,7 @@ salto:
 		char respuesta[3] = "OK";
 		send(clisock,respuesta,sizeof(respuesta),0);
 		RtlZeroMemory(recvbuf,sizeof(recvbuf));
-		leerr(clisock,recvbuf);
+		leerr::leer(clisock,recvbuf);
 		std::string var1 = recvbuf;
 		sql::Driver *driver;
 		sql::Connection *conn;
@@ -347,7 +241,7 @@ salto:
 			preciocobre[var7.str().size()] = 0;
 			memcpy(preciocobre,var7.str().c_str(),var7.str().size());
 			send(clisock,preciocobre,var7.str().size(),0);
-			leerr(clisock,recvbuf);
+			leerr::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0) continue;
 			//Iron price.
 			int var9 = rst->getInt("hierro");
@@ -356,7 +250,7 @@ salto:
 			precioiron[var7.str().size()] = 0;
 			memcpy(precioiron,var7.str().c_str(),var7.str().size());
 			send(clisock,precioiron,var7.str().size(),0);
-			leerr(clisock,recvbuf);
+			leerr::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0) continue;
 			//Hours price.
 			int var10 = rst->getInt("time");
@@ -366,7 +260,7 @@ salto:
 			memcpy(preciohoras,var7.str().c_str(),var7.str().size());
 			send(clisock,preciohoras,var7.str().size(),0);
 			//End.
-			leerr(clisock,recvbuf);
+			leerr::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0) std::cout << "WARNING! No OK was received after sending prices. Client could have crashed!" << endl;
 			
 		}
@@ -410,7 +304,7 @@ salto:
 		conn->setSchema("wars");
 		stmt = conn->createStatement();
 		std::stringstream var1;
-		leerr(clisock,recvbuf);
+		leerr::leer(clisock,recvbuf);
 		std::string cityID = recvbuf;
 		var1 << "SELECT cityName FROM cities WHERE CityID='" << cityID << "'";
 		rst = stmt->executeQuery(var1.str());
@@ -427,7 +321,7 @@ salto:
 		memcpy(enviar,nombre.c_str(),nombre.size());
 		send(clisock,enviar,nombre.size(),0);
 		RtlZeroMemory(recvbuf,sizeof(recvbuf));
-		leerr(clisock,recvbuf);
+		leerr::leer(clisock,recvbuf);
 		if (strcmp(recvbuf,"OK") != 0)
 		{
 			std::cout << "WARNING! Client didn't send an ok after sending City Name in GET_CITY_NAME. Could have crashed or disconnected." << endl;
