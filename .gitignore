@@ -1,0 +1,6 @@
+stdafx.h
+*.user
+Debug/
+Release/
+*.vcproj
+targetver.h
