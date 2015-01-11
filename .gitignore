@@ -1,4 +1,5 @@
 stdafx.h
+stdafx.cpp
 *.user
 Debug/
 Release/

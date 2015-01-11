@@ -22,6 +22,7 @@
 #include <cppconn\prepared_statement.h>
 #include "SendCityData.h"
 #include "Client.h"
+#include "CitySimylator.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
 #define DEFAULT_BUFLEN 512
@@ -460,6 +461,8 @@ cout << "Client disconnected/Ended communication with client. Current clients co
 return 0;
 }
 int main() {
+	unsigned CitySimulatorThread;
+	HANDLE h = (HANDLE)_beginthreadex(NULL,0,&CitySimulator::StartThread,NULL,0,&CitySimulatorThread);
 	WSADATA wsaData;
     int iResult;
     SOCKET sock = INVALID_SOCKET;
