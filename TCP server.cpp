@@ -23,6 +23,7 @@
 #include "SendCityData.h"
 #include "Client.h"
 #include "CitySimylator.h"
+#include "Commands\LOGIN_LIMIT.cpp"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
 #define DEFAULT_BUFLEN 512
@@ -90,25 +91,7 @@ unsigned __stdcall ClientSession(void* data)
 		break;
 	}
 	else if (strcmp(recvbuf,"LOGIN_LIMIT")==0) {
-		sql::Driver *driver;
-		sql::Connection *conn;
-		sql::Statement *stmt;
-		sql::ResultSet *rst;
-		driver=sql::mysql::get_mysql_driver_instance();
-		conn=driver->connect("localhost","root","power500");
-		conn->setSchema("wars");
-		stmt=conn->createStatement();
-		rst=stmt->executeQuery("SELECT * FROM options");
-		rst->first();
-		int opt = rst->getInt("CheckIPAddresses");
-		if (opt==1) {
-			char buff[DEFAULT_BUFLEN]="YES";
-			send(clisock,buff,sizeof(buff),0);
-		}
-		if (opt==0) {
-			char buff[DEFAULT_BUFLEN]="NO";
-			send(clisock,buff,sizeof(buff),0);
-		}
+		run_LOGIN_LIMIT(clisock);
 	}
 	else if (strcmp(recvbuf,"CHECK_IP")==0)
 	{
