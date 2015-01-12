@@ -13,10 +13,11 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <sstream>
 #include "..\Util\read.h"
 namespace
 {
-	int run_GET_PRICE(SOCKET socket)
+	int run_GET_PRICE(SOCKET clisock,char * recvbuf)
 	{
 		char respuesta[3] = "OK";
 		send(clisock,respuesta,sizeof(respuesta),0);
@@ -80,8 +81,8 @@ namespace
 			send(clisock,preciohoras,var7.str().size(),0);
 			//End.
 			resultado = util::leer(clisock,recvbuf); if (resultado == 1) return 1;
-			if (strcmp(recvbuf,"OK") != 0) std::cout << "WARNING! No OK was received after sending prices. Client could have crashed!" << endl;
-			
+			if (strcmp(recvbuf,"OK") != 0) std::cout << "WARNING! No OK was received after sending prices. Client could have crashed!" << std::endl;
 		}
+		return 0;
 	}
 }

@@ -28,6 +28,7 @@
 #include "Commands\NAME_AVAIABLE.cpp"
 #include "Commands\KEEP.cpp"
 #include "Commands\GET_INDEX.cpp"
+#include "Commands\GET_PRICE.cpp"
 #include "Util\read.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
@@ -94,7 +95,7 @@ unsigned __stdcall ClientSession(void* data)
 	}
 	else if (strcmp(recvbuf,"GET_PRICE")==0)
 	{
-		iResult = run_GET_PRICE(clisock);
+		iResult = run_GET_PRICE(clisock,recvbuf);
 		if (iResult == 1) break;
 		if (iResult == 2) continue;
 	}
