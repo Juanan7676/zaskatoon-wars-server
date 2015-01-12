@@ -4,7 +4,7 @@
 #include <ws2tcpip.h>
 #include <iostream>
 #include "read.h"
-int leerr::leer(SOCKET s, char *recvbuf)
+int util::leer(SOCKET s, char *recvbuf)
 	{
 		SOCKET clisock=s;
 		int iResult=0;

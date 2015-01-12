@@ -47,7 +47,7 @@ unsigned __stdcall ClientSession(void* data)
 	{
 	RtlZeroMemory(&recvbuf,sizeof(recvbuf));
 	setsockopt(clisock,SOL_SOCKET,SO_RCVTIMEO,(char *)&milliseconds,sizeof(milliseconds));
-	iResult = leerr::leer(clisock,recvbuf);
+	iResult = util::leer(clisock,recvbuf);
 	if (iResult == 1)
 	{
 		--conn;
@@ -75,7 +75,7 @@ unsigned __stdcall ClientSession(void* data)
 		char buff[255]="OK";
 		send(clisock,buff,sizeof(buff),0);
 		ZeroMemory(&recvbuf,sizeof(recvbuf));
-		int iResult=leerr::leer(clisock,recvbuf); if (iResult==1) {--conn;break;}
+		int iResult=util::leer(clisock,recvbuf); if (iResult==1) {--conn;break;}
 		string datos=recvbuf;
 		sql::Driver *driver;
 		sql::Connection *conn;
@@ -128,10 +128,10 @@ unsigned __stdcall ClientSession(void* data)
 			ZeroMemory(readbuffer,sizeof(readbuffer));
 			send(clisock,buffer,sizeof(buffer),0);
 			ZeroMemory(recvbuf,sizeof(recvbuf));
-			leerr::leer(clisock,recvbuf);
+			util::leer(clisock,recvbuf);
 			string username = recvbuf;
 			ZeroMemory(recvbuf,sizeof(recvbuf));
-			leerr::leer(clisock,recvbuf);
+			util::leer(clisock,recvbuf);
 			string pasword = recvbuf;
 			sql::Driver *driver;
 			sql::Connection *conn;
@@ -174,7 +174,7 @@ unsigned __stdcall ClientSession(void* data)
 			char enviaelfinal[5] = "END";
 			send(clisock,enviaelfinal,sizeof(enviaelfinal),0);
 			RtlZeroMemory(recvbuf,sizeof(recvbuf));
-			int okvar = leerr::leer(clisock,recvbuf);
+			int okvar = util::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0 || okvar == 1)
 			{
 				std::cout << "Client didn't send the OK after sending all the city data. Closing connection.";
@@ -202,7 +202,7 @@ unsigned __stdcall ClientSession(void* data)
 		char respuesta[3] = "OK";
 		send(clisock,respuesta,sizeof(respuesta),0);
 		RtlZeroMemory(recvbuf,sizeof(recvbuf));
-		leerr::leer(clisock,recvbuf);
+		util::leer(clisock,recvbuf);
 		std::string var1 = recvbuf;
 		sql::Driver *driver;
 		sql::Connection *conn;
@@ -241,7 +241,7 @@ unsigned __stdcall ClientSession(void* data)
 			preciocobre[var7.str().size()] = 0;
 			memcpy(preciocobre,var7.str().c_str(),var7.str().size());
 			send(clisock,preciocobre,var7.str().size(),0);
-			leerr::leer(clisock,recvbuf);
+			util::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0) continue;
 			//Iron price.
 			int var9 = rst->getInt("hierro");
@@ -250,7 +250,7 @@ unsigned __stdcall ClientSession(void* data)
 			precioiron[var7.str().size()] = 0;
 			memcpy(precioiron,var7.str().c_str(),var7.str().size());
 			send(clisock,precioiron,var7.str().size(),0);
-			leerr::leer(clisock,recvbuf);
+			util::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0) continue;
 			//Hours price.
 			int var10 = rst->getInt("time");
@@ -260,7 +260,7 @@ unsigned __stdcall ClientSession(void* data)
 			memcpy(preciohoras,var7.str().c_str(),var7.str().size());
 			send(clisock,preciohoras,var7.str().size(),0);
 			//End.
-			leerr::leer(clisock,recvbuf);
+			util::leer(clisock,recvbuf);
 			if (strcmp(recvbuf,"OK") != 0) std::cout << "WARNING! No OK was received after sending prices. Client could have crashed!" << endl;
 			
 		}
@@ -304,7 +304,7 @@ unsigned __stdcall ClientSession(void* data)
 		conn->setSchema("wars");
 		stmt = conn->createStatement();
 		std::stringstream var1;
-		leerr::leer(clisock,recvbuf);
+		util::leer(clisock,recvbuf);
 		std::string cityID = recvbuf;
 		var1 << "SELECT cityName FROM cities WHERE CityID='" << cityID << "'";
 		rst = stmt->executeQuery(var1.str());
@@ -321,7 +321,7 @@ unsigned __stdcall ClientSession(void* data)
 		memcpy(enviar,nombre.c_str(),nombre.size());
 		send(clisock,enviar,nombre.size(),0);
 		RtlZeroMemory(recvbuf,sizeof(recvbuf));
-		leerr::leer(clisock,recvbuf);
+		util::leer(clisock,recvbuf);
 		if (strcmp(recvbuf,"OK") != 0)
 		{
 			std::cout << "WARNING! Client didn't send an ok after sending City Name in GET_CITY_NAME. Could have crashed or disconnected." << endl;

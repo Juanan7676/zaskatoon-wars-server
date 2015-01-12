@@ -22,7 +22,7 @@ namespace
 		char buff[3]="OK";
 		send(clisock,buff,sizeof(buff),0);
 		ZeroMemory(&recvbuf,sizeof(recvbuf));
-		leerr::leer(clisock,recvbuf); 
+		util::leer(clisock,recvbuf); 
 		std::string datos=recvbuf;
 		sql::Driver *driver;
 		sql::Connection *conn;
