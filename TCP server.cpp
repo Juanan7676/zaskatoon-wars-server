@@ -29,6 +29,7 @@
 #include "Commands\KEEP.cpp"
 #include "Commands\GET_INDEX.cpp"
 #include "Commands\GET_PRICE.cpp"
+#include "Commands\GET_CITY_ID.cpp"
 #include "Util\read.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
@@ -101,22 +102,8 @@ unsigned __stdcall ClientSession(void* data)
 	}
 	else if (strcmp(recvbuf,"GET_CITY_ID")==0)
 	{
-		if (c.isLogged() == false)
-		{
-			char buffer[20] = "ERROR_NOT_LOGGED";
-			send(clisock,buffer,sizeof(buffer),0);
-			continue;
-		}
-		char ok[3] = "OK";
-		send(clisock,ok,sizeof(ok),0);
-		int CityID = c.getCurrentCityID();
-		std::stringstream var2;
-		var2 << CityID;
-		string var3 = var2.str();
-		char *var1 = new char[var3.size()+1];
-		var1[var3.size()] = 0;
-		memcpy(var1,var3.c_str(),var3.size());
-		send(clisock,var1,var3.size(),0);
+		iResult = run_GET_CITY_ID(clisock,c);
+		if (iResult == 1) continue;
 	}
 	else if (strcmp(recvbuf,"GET_CITY_NAME") == 0)
 	{
