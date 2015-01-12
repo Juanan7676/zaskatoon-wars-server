@@ -26,6 +26,7 @@
 #include "Commands\LOGIN_LIMIT.cpp"
 #include "Commands\CHECK_IP.cpp"
 #include "Commands\NAME_AVAIABLE.cpp"
+#include "Commands\KEEP.cpp"
 #include "Util\read.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
@@ -82,19 +83,8 @@ unsigned __stdcall ClientSession(void* data)
 	}
 	else if (strcmp(recvbuf,"KEEP")==0)
 	{
-		milliseconds=100000000;
-		setsockopt(clisock,SOL_SOCKET,SO_RCVTIMEO,(char *)&milliseconds,sizeof(milliseconds));
-		char sendbuffer[5] = "OK";
-		try
-		{
-			send(clisock,sendbuffer,sizeof(sendbuffer),0);
-		}
-		catch (std::exception e)
-		{
-			std::cerr << e.what() << endl;
-			closesocket(clisock);
-			goto je;
-		}
+		iResult = run_KEEP(&clisock);
+		if (iResult == 1) break;
 	}
 	else if (strcmp(recvbuf,"GET_INDEX")==0)
 	{
