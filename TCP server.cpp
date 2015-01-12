@@ -25,6 +25,7 @@
 #include "CitySimylator.h"
 #include "Commands\LOGIN_LIMIT.cpp"
 #include "Commands\CHECK_IP.cpp"
+#include "Commands\NAME_AVAIABLE.cpp"
 #include "Util\read.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
@@ -68,40 +69,12 @@ unsigned __stdcall ClientSession(void* data)
 	else if (strcmp(recvbuf,"REGISTER")==0)
 	{
 		iResult=registro::registre(clisock);
-		if (iResult==1) {--conn;break;}
+		if (iResult==1) break;
 	}
 	else if (strcmp(recvbuf,"NAME_AVAIABLE")==0)
 	{
-		char buff[255]="OK";
-		send(clisock,buff,sizeof(buff),0);
-		ZeroMemory(&recvbuf,sizeof(recvbuf));
-		int iResult=util::leer(clisock,recvbuf); if (iResult==1) {--conn;break;}
-		string datos=recvbuf;
-		sql::Driver *driver;
-		sql::Connection *conn;
-		sql::Statement *stmt;
-		sql::ResultSet *rst;
-		driver=sql::mysql::get_mysql_driver_instance();
-		conn=driver->connect("localhost","root","power500");
-		conn->setSchema("wars");
-		stmt=conn->createStatement();
-		rst=stmt->executeQuery("SELECT * FROM users");
-		rst->first();
-		bool used=false;
-		string response;
-		if (rst->rowsCount()!=0)
-		{
-			do
-			{
-				if (rst->getString("userName")==datos) {used=true;}
-			} while(rst->next());
-		}
-		if (used==true) {response="NO";}
-		else {response="YES";}
-		char *bufff=new char[response.size()+1];
-		bufff[response.size()]=0;
-		memcpy(bufff,response.c_str(),response.size());
-		send(clisock,bufff,sizeof(bufff),0);
+		iResult = run_NAME_AVAIABLE(clisock,recvbuf);
+		if (iResult == 1) break;
 	}
 	else if (strcmp(recvbuf,"KEEP")==0)
 	{
@@ -335,6 +308,7 @@ unsigned __stdcall ClientSession(void* data)
 	}
 je:
 cout << "Client disconnected/Ended communication with client. Current clients connected:" << conn << endl;
+--conn;
 return 0;
 }
 int main() {
