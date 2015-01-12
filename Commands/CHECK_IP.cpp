@@ -17,12 +17,12 @@
 namespace
 {
 
-	void run_CHECK_IP(SOCKET clisock, char* recvbuf)
+	int run_CHECK_IP(SOCKET clisock, char* recvbuf)
 	{
 		char buff[3]="OK";
 		send(clisock,buff,sizeof(buff),0);
 		ZeroMemory(&recvbuf,sizeof(recvbuf));
-		util::leer(clisock,recvbuf); 
+		int resultado = util::leer(clisock,recvbuf);  if (resultado != 0) return 1;
 		std::string datos=recvbuf;
 		sql::Driver *driver;
 		sql::Connection *conn;
@@ -70,5 +70,6 @@ salto:
 				send(clisock,buff,sizeof(buff),0);
 			}
 		}
+		return 0;
 	}
 }

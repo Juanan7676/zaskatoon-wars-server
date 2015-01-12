@@ -65,11 +65,15 @@ unsigned __stdcall ClientSession(void* data)
 		break;
 	}
 	else if (strcmp(recvbuf,"LOGIN_LIMIT")==0) run_LOGIN_LIMIT(clisock);
-	else if (strcmp(recvbuf,"CHECK_IP")==0) run_CHECK_IP(clisock,recvbuf);
+	else if (strcmp(recvbuf,"CHECK_IP")==0) 
+	{
+		iResult = run_CHECK_IP(clisock,recvbuf);
+		if (iResult == 1) break;
+	}
 	else if (strcmp(recvbuf,"REGISTER")==0)
 	{
 		iResult=registro::registre(clisock);
-		if (iResult==1) break;
+		if (iResult == 1) break;
 	}
 	else if (strcmp(recvbuf,"NAME_AVAIABLE")==0)
 	{
