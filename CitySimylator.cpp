@@ -5,7 +5,8 @@
 unsigned __stdcall CitySimulator::StartThread(void* data)
 {
 	time_t stamp = time(NULL);
-	struct tm* tiempo = localtime(&stamp);
+	struct tm* tiempo = NULL;
+	errno_t err = localtime_s(tiempo,&stamp);
 	while(1) //Must add a "stop simulation" and command-line in main thread. Pointer to a bool variable (data) and when it is true, exit loop.
 	{
 		int minuto;

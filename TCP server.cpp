@@ -27,6 +27,7 @@
 #include "Commands\CHECK_IP.cpp"
 #include "Commands\NAME_AVAIABLE.cpp"
 #include "Commands\KEEP.cpp"
+#include "Commands\GET_INDEX.cpp"
 #include "Util\read.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
@@ -88,149 +89,14 @@ unsigned __stdcall ClientSession(void* data)
 	}
 	else if (strcmp(recvbuf,"GET_INDEX")==0)
 	{
-		try
-		{
-			char buffer[255] = "OK";
-			char readbuffer[DEFAULT_BUFLEN];
-			ZeroMemory(readbuffer,sizeof(readbuffer));
-			send(clisock,buffer,sizeof(buffer),0);
-			ZeroMemory(recvbuf,sizeof(recvbuf));
-			util::leer(clisock,recvbuf);
-			string username = recvbuf;
-			ZeroMemory(recvbuf,sizeof(recvbuf));
-			util::leer(clisock,recvbuf);
-			string pasword = recvbuf;
-			sql::Driver *driver;
-			sql::Connection *conn;
-			sql::Statement *stmt;
-			sql::ResultSet *rst;
-			driver = sql::mysql::get_mysql_driver_instance();
-			conn = driver->connect("localhost","root","power500");
-			conn->setSchema("wars");
-			stmt = conn->createStatement();
-			std::stringstream comando;
-			comando << "SELECT * FROM users WHERE userName='" << username << "' AND pass='" << pasword << "'";
-			rst = stmt->executeQuery(comando.str());
-			if (rst->rowsCount()==0)
-			{
-				char badlogin[255] = "ERROR_BAD_LOGIN";
-				send(clisock,badlogin,sizeof(badlogin),0);
-				closesocket(clisock);
-				goto je;
-			}
-			else
-			{
-				char loginOK[255] = "OK";
-				send(clisock,loginOK,sizeof(loginOK),0);
-				c.setLogged(true);
-				c.setUsername(username);
-				c.setPassword(pasword);
-				comando.str("");
-				comando << "SELECT * FROM users WHERE userName='" << username << "'";
-				rst = stmt->executeQuery(comando.str());
-				comando.str("");
-				rst->first();
-				c.setCurrentCityID(rst->getInt("DefaultCity"));
-			}
-			bool Resultado=CityManagement::SendData(username,clisock);
-			if (!Resultado)
-			{
-				closesocket(clisock);
-				goto je;
-			}
-			char enviaelfinal[5] = "END";
-			send(clisock,enviaelfinal,sizeof(enviaelfinal),0);
-			RtlZeroMemory(recvbuf,sizeof(recvbuf));
-			int okvar = util::leer(clisock,recvbuf);
-			if (strcmp(recvbuf,"OK") != 0 || okvar == 1)
-			{
-				std::cout << "Client didn't send the OK after sending all the city data. Closing connection.";
-				closesocket(clisock);
-				goto je;
-			}
-			ZeroMemory(recvbuf,sizeof(recvbuf));
-		}
-		catch (sql::SQLException e)
-		{
-			std::cerr << e.what();
-			closesocket(clisock);
-			goto je;
-		}
-		catch (std::exception e)
-		{
-			std::cerr << e.what();
-			closesocket(clisock);
-			goto je;
-		}
-		
+		iResult = run_GET_INDEX(clisock,recvbuf,&c);
+		if (iResult == 1) break;
 	}
 	else if (strcmp(recvbuf,"GET_PRICE")==0)
 	{
-		char respuesta[3] = "OK";
-		send(clisock,respuesta,sizeof(respuesta),0);
-		RtlZeroMemory(recvbuf,sizeof(recvbuf));
-		util::leer(clisock,recvbuf);
-		std::string var1 = recvbuf;
-		sql::Driver *driver;
-		sql::Connection *conn;
-		sql::Statement *stmt;
-		sql::ResultSet *rst;
-		driver = sql::mysql::get_mysql_driver_instance();
-		conn = driver->connect("localhost","root","power500");
-		conn->setSchema("wars");
-		stmt = conn->createStatement();
-		std::stringstream var2;
-		var2 << "SELECT * FROM prices WHERE Valor='" << var1 << "'";
-		rst = stmt->executeQuery(var2.str());
-		if (rst->rowsCount() == 0)
-		{
-			std::cout << "Client sent an unknown value after GET_PRICE: " << var1 << std::endl;
-			char var3[20] = "ERROR_BAD_VALUE";
-			send(clisock,var3,sizeof(var3),0);
-		}
-		else
-		{
-			//Money price.
-			rst->first();
-			int var4 = rst->getInt("Precio");
-			std::stringstream var7;
-			var7 << var4;
-			std::string var6 = var7.str();
-			char *var5 = new char[var6.size() + 1];
-			var5[var6.size()] = 0;
-			memcpy(var5,var6.c_str(),var6.size());
-			send(clisock,var5,var6.size(),0);
-			RtlZeroMemory(recvbuf,sizeof(recvbuf));
-			//Copper price.
-			int var8 = rst->getInt("cobre");
-			var7.str(""); var7 << var8;
-			char *preciocobre = new char[var7.str().size() + 1];
-			preciocobre[var7.str().size()] = 0;
-			memcpy(preciocobre,var7.str().c_str(),var7.str().size());
-			send(clisock,preciocobre,var7.str().size(),0);
-			util::leer(clisock,recvbuf);
-			if (strcmp(recvbuf,"OK") != 0) continue;
-			//Iron price.
-			int var9 = rst->getInt("hierro");
-			var7.str(""); var7 << var9;
-			char *precioiron = new char[var7.str().size() + 1];
-			precioiron[var7.str().size()] = 0;
-			memcpy(precioiron,var7.str().c_str(),var7.str().size());
-			send(clisock,precioiron,var7.str().size(),0);
-			util::leer(clisock,recvbuf);
-			if (strcmp(recvbuf,"OK") != 0) continue;
-			//Hours price.
-			int var10 = rst->getInt("time");
-			var7.str(""); var7 << var10;
-			char *preciohoras = new char[var7.str().size() + 1];
-			preciohoras[var7.str().size()] = 0;
-			memcpy(preciohoras,var7.str().c_str(),var7.str().size());
-			send(clisock,preciohoras,var7.str().size(),0);
-			//End.
-			util::leer(clisock,recvbuf);
-			if (strcmp(recvbuf,"OK") != 0) std::cout << "WARNING! No OK was received after sending prices. Client could have crashed!" << endl;
-			
-		}
+		iResult = run_GET_PRICE(clisock);
+		if (iResult == 1) break;
+		if (iResult == 2) continue;
 	}
 	else if (strcmp(recvbuf,"GET_CITY_ID")==0)
 	{
@@ -300,8 +166,8 @@ unsigned __stdcall ClientSession(void* data)
 		send(clisock,buff,sizeof(buff),0);
 	}
 	}
-je:
 cout << "Client disconnected/Ended communication with client. Current clients connected:" << conn << endl;
+closesocket(clisock);
 --conn;
 return 0;
 }
