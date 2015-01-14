@@ -41,6 +41,12 @@ Task::Task(int TaskID)
 		this->TaskID = NULL;
 		this->metadata = "";
 	}
+	catch (sql::SQLException e)
+	{
+		std::cerr << e.what();
+		this->TaskID = NULL;
+		this->metadata = "";
+	}
 }
 
 InvalidTaskIDException::InvalidTaskIDException(std::string message)
