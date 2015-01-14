@@ -53,3 +53,23 @@ InvalidTaskIDException::InvalidTaskIDException(std::string message)
 {
 	this->message = message;
 }
+
+int Task::proccess()
+{
+	int TaskID = this->TaskID;
+	sql::Driver *d;
+	sql::Connection *c;
+	sql::Statement *s;
+	sql::ResultSet *rst;
+	d = sql::mysql::get_mysql_driver_instance();
+	c = d->connect("localhost","root","power500");
+	c->setSchema("wars");
+	s = c->createStatement();
+	std::stringstream command;
+	command << "SELECT * FROM tasks WHERE TaskID=" << TaskID;
+	rst = s->executeQuery(command.str()); rst->first();
+	std::string metadatos = rst->getString("Metadata");
+	char *Metadata = new char[metadatos.size() + 1];
+	memcpy(Metadata,metadatos.c_str(),metadatos.size());
+	return 0;
+}
