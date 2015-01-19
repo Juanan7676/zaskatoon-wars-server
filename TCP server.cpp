@@ -54,21 +54,12 @@ unsigned __stdcall ClientSession(void* data)
 	RtlZeroMemory(&recvbuf,sizeof(recvbuf));
 	setsockopt(clisock,SOL_SOCKET,SO_RCVTIMEO,(char *)&milliseconds,sizeof(milliseconds));
 	iResult = util::leer(clisock,recvbuf);
-	if (iResult == 1)
-	{
-		--conn;
-		closesocket(clisock);
-		break;
-	}
+	if (iResult == 1) break;
 	if (strcmp(recvbuf,"HI")==0) {
 		char buff[DEFAULT_BUFLEN]="WELCOME";
 		send(clisock,buff,sizeof(buff),0);
 	}
-	else if (strcmp(recvbuf,"BYE")==0) {
-		closesocket(clisock);
-		--conn;
-		break;
-	}
+	else if (strcmp(recvbuf,"BYE")==0) break;
 	else if (strcmp(recvbuf,"LOGIN_LIMIT")==0) run_LOGIN_LIMIT(clisock);
 	else if (strcmp(recvbuf,"CHECK_IP")==0) 
 	{
@@ -117,9 +108,9 @@ unsigned __stdcall ClientSession(void* data)
 		send(clisock,buff,sizeof(buff),0);
 	}
 	}
-cout << "Client disconnected/Ended communication with client. Current clients connected:" << conn << endl;
 closesocket(clisock);
 --conn;
+cout << "Client disconnected/Ended communication with client. Current clients connected:" << conn << endl;
 return 0;
 }
 int main() {
