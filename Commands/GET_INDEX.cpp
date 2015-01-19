@@ -25,13 +25,12 @@ namespace
 		try
 		{
 			char buffer[3] = "OK";
-			char readbuffer[255];
-			ZeroMemory(readbuffer,sizeof(readbuffer));
 			send(clisock,buffer,sizeof(buffer),0);
-			ZeroMemory(recvbuf,sizeof(recvbuf));
+			ZeroMemory(recvbuf,255);
 			util::leer(clisock,recvbuf);
 			std::string username = recvbuf;
-			ZeroMemory(recvbuf,sizeof(recvbuf));
+			std::cout << username << std::endl;
+			ZeroMemory(recvbuf,255);
 			util::leer(clisock,recvbuf);
 			std::string pasword = recvbuf;
 			sql::Driver *driver;
