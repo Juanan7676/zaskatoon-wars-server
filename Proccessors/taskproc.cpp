@@ -11,6 +11,7 @@
 #include <cppconn\exception.h>
 #include <cppconn\prepared_statement.h>
 #include <sstream>
+#include "..\Util\metadataseparator.h"
 
 Task::Task(int TaskID) 
 {
@@ -71,5 +72,15 @@ int Task::proccess()
 	std::string metadatos = rst->getString("Metadata");
 	char *Metadata = new char[metadatos.size() + 1];
 	memcpy(Metadata,metadatos.c_str(),metadatos.size());
+	Tag tag = util::SeparateTags(Metadata, 0);
+	if (tag.TagName == "Type")
+	{
+		if (tag.TagValue == "BUILD")
+		{
+			Tag city = util::SeparateTags(Metadata, 1);
+			Tag field = util::SeparateTags(Metadata, 2);
+
+		}
+	}
 	return 0;
 }
