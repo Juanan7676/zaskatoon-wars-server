@@ -32,6 +32,7 @@
 #include "Commands\GET_CITY_ID.cpp"
 #include "Commands\GET_CITY_NAME.cpp"
 #include "Util\read.h"
+#include "CommandLine\main.h"
 #undef UNICODE
 #pragma comment (lib, "Ws2_32.lib")
 #define DEFAULT_BUFLEN 512
@@ -78,7 +79,7 @@ unsigned __stdcall ClientSession(void* data)
 	}
 	else if (strcmp(recvbuf,"KEEP")==0)
 	{
-		iResult = run_KEEP(&clisock);
+		iResult = run_KEEP(&clisock,&milliseconds);
 		if (iResult == 1) break;
 	}
 	else if (strcmp(recvbuf,"GET_INDEX")==0)
@@ -117,6 +118,8 @@ int main() {
 	unsigned CitySimulatorThread;
 	HANDLE h = (HANDLE)_beginthreadex(NULL,0,&CitySimulator::StartThread,NULL,0,&CitySimulatorThread);
 	WSADATA wsaData;
+	unsigned CommandLineThread;
+	HANDLE hh = (HANDLE)_beginthreadex(NULL,0,&CommandLine::main,NULL,0,&CommandLineThread);
     int iResult;
     SOCKET sock = INVALID_SOCKET;
     SOCKET clisock = INVALID_SOCKET;

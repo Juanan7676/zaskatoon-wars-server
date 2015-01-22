@@ -15,10 +15,10 @@
 #include <ws2tcpip.h>
 namespace
 {
-	int run_KEEP(SOCKET * socket)
+	int run_KEEP(SOCKET * socket,int *milliseconds)
 	{
-		int milliseconds=100000000;
-		setsockopt(*socket,SOL_SOCKET,SO_RCVTIMEO,(char *)&milliseconds,sizeof(milliseconds));
+		*milliseconds=100000000;
+		setsockopt(*socket,SOL_SOCKET,SO_RCVTIMEO,(char *)milliseconds,9);
 		char sendbuffer[5] = "OK";
 		try
 		{
