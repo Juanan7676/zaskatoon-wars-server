@@ -21,7 +21,7 @@ namespace
 	{
 		char respuesta[3] = "OK";
 		send(clisock,respuesta,sizeof(respuesta),0);
-		RtlZeroMemory(recvbuf,sizeof(recvbuf));
+		RtlZeroMemory(recvbuf,255);
 		util::leer(clisock,recvbuf);
 		std::string var1 = recvbuf;
 		sql::Driver *driver;
