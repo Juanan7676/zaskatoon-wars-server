@@ -17,37 +17,50 @@
 
 unsigned __stdcall CitySimulator::StartThread(void* data)
 {
-	time_t stamp = time(NULL);
-	struct tm tiempo;
-	errno_t err = localtime_s(&tiempo,&stamp);
-	while(1) //Must add a "stop simulation" and command-line in main thread. Pointer to a bool variable (data) and when it is true, exit loop.
+	try
 	{
-		sql::Driver *driver;
-		sql::Connection *conn;
-		sql::Statement *stmt;
-		sql::ResultSet *rst;
-		driver = sql::mysql::get_mysql_driver_instance();
-		conn = driver->connect("localhost","root","power500");
-		conn->setSchema("wars");
-		stmt = conn->createStatement();
-		std::stringstream comando;
-		rst = stmt->executeQuery("SELECT * FROM tasks");
-		rst->first();
-		if (rst->next())
+		time_t stamp = time(NULL);
+		struct tm tiempo;
+		errno_t err = localtime_s(&tiempo,&stamp);
+		while(1) //Must add a "stop simulation" and command-line in main thread. Pointer to a bool variable (data) and when it is true, exit loop.
 		{
+			sql::Driver *driver;
+			sql::Connection *conn;
+			sql::Statement *stmt;
+			sql::ResultSet *rst;
+			driver = sql::mysql::get_mysql_driver_instance();
+			conn = driver->connect("localhost","root","power500");
+			conn->setSchema("wars");
+			stmt = conn->createStatement();
+			std::stringstream comando;
+			rst = stmt->executeQuery("SELECT * FROM tasks");
 			rst->first();
+			if (rst->next())
+			{
+				rst->first();
+				do
+				{
+					Task task = Task(rst->getInt("TaskID"));
+					task.proccess();
+				} while (rst->next());
+			}
+			int minuto;
 			do
 			{
-				Task task = Task(rst->getInt("TaskID"));
-				task.proccess();
-			} while (rst->next());
+				Sleep(1000);
+				minuto = tiempo.tm_min;
+			} while (minuto != 0); //Check for next update
 		}
-		int minuto;
-		do
-		{
-			Sleep(1000);
-			minuto = tiempo.tm_min;
-		} while (minuto != 0); //Check for next update
+	}
+	catch (sql::SQLException e)
+	{
+		std::cerr << "Se ha producido una excepcion SQL: " << e.what() << std::endl;
+		return 0;
+	}
+	catch (std::exception e)
+	{
+		std::cerr << "Se ha producido una excepcion: " << e.what() << std::endl;
+		return 0;
 	}
 	return 0;
 }
