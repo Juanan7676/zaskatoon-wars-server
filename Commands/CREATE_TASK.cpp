@@ -1,0 +1,14 @@
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <string>
+#include "..\Proccessors\taskproc.h"
+
+namespace
+{
+	int run_CREATE_TASK(SOCKET *clisock,char *recvbuf)
+	{
+		return 0;
+	}
+}
