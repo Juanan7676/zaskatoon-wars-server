@@ -21,7 +21,7 @@ namespace
 	{
 		char buff[255]="OK";
 		send(clisock,buff,sizeof(buff),0);
-		ZeroMemory(&recvbuf,sizeof(recvbuf));
+		ZeroMemory(recvbuf,255);
 		int iResult=util::leer(clisock,recvbuf); if (iResult==1) return 1;
 		std::string datos=recvbuf;
 		sql::Driver *driver;
