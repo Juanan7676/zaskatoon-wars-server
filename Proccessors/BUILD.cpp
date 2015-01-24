@@ -14,7 +14,7 @@
 #include <string>
 #include "..\Util\metadataseparator.h"
 
-void tasks::ProccessBuild(int cityID,std::string field)
+void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 {
 	sql::Driver *driver;
 	sql::Connection *conn;
@@ -35,7 +35,25 @@ void tasks::ProccessBuild(int cityID,std::string field)
 	Tag var2 = util::SeparateTags(cadena,1);
 	if (var2.TagValue == "1")
 	{
-		//Code to build the city
+		//Construction complete, delete task
+		comando.str("");
+		comando << "DELETE FROM tasks WHERE TaskID=" << TaskID;
+		stmt->executeUpdate(comando.str());
+		//Replace metadata with new building
+		std::string nmetadata;
+		if (var3.TagValue == "BOMBA_DE_AGUA") nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;";
+		if (var3.TagValue == "PERFORADORA_PETROLEO") nmetadata ="Type=PERFORADORA_PETROLEO;Size=1;Remaining=100000;MJStored=0;";
+		if (var3.TagValue == "EXTRACCION_GAS") nmetadata = "Type=EXTRACCION_GAS;Size=1;Remaining=100000;MJStored=0;";
+		if (var3.TagValue == "MINA_COBRE") nmetadata = "Type=MINA_COBRE;Size=1;Remaining=750000;MJStored=0;";
+		if (var3.TagValue == "MINA_HIERRO") nmetadata = "Type=MINA_HIERRO;Size=1;Remaining=750000;MJStored=0;";
+		/*
+			TODO: More buildings...
+		*/
+		comando.str("");
+		comando << "UPDATE city" << cityID << " SET Metadata='" << nmetadata << "' WHERE FieldX=" << var1[0] << " AND FieldY=" << var1[1];
+		stmt->executeUpdate(comando.str());
+		// Create new Task to proccess building
+
 	}
 	else
 	{

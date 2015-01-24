@@ -84,3 +84,26 @@ int Task::proccess()
 	}
 	return 0;
 }
+
+Task::Task(std::string metadata)
+{
+	this->metadata = metadata;
+}
+
+void Task::push()
+{
+	sql::Driver *driver;
+	sql::Connection *conn;
+	sql::Statement *stmt;
+	sql::ResultSet *rst;
+	driver = sql::mysql::get_mysql_driver_instance();
+	conn = driver->connect("localhost","root","power500");
+	conn->setSchema("wars");
+	stmt = conn->createStatement();
+	rst = stmt->executeQuery("SELECT TaskID FROM tasks ORDER BY TaskID DESC");
+	rst->first();
+	int ID = rst->getInt("TaskID") + 1;
+	std::stringstream comando;
+	comando << "INSERT INTO tasks VALUES (" << ID << ",'" << this->metadata << "')";
+	stmt->executeUpdate(comando.str());
+}

@@ -2,5 +2,5 @@
 
 namespace tasks
 {
-	void ProccessBuild(int cityID,std::string field);
+	void ProccessBuild(int cityID,std::string field,int TaskID);
 };

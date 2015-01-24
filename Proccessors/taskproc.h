@@ -8,6 +8,8 @@ class Task
 {
 public:
 	Task(int TaskID);
+	Task(std::string metadata);
+	void push();
 	int proccess();
 	int TaskID;
 	std::string metadata;
