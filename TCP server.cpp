@@ -31,6 +31,7 @@
 #include "Commands\GET_PRICE.cpp"
 #include "Commands\GET_CITY_ID.cpp"
 #include "Commands\GET_CITY_NAME.cpp"
+#include "Commands\CREATE_TASK.cpp"
 #include "Util\read.h"
 #include "CommandLine\main.h"
 #undef UNICODE
@@ -101,6 +102,11 @@ unsigned __stdcall ClientSession(void* data)
 	else if (strcmp(recvbuf,"GET_CITY_NAME") == 0)
 	{
 		iResult = run_GET_CITY_NAME(clisock,c,recvbuf);
+		if (iResult != 0) break;
+	}
+	else if (strcmp(recvbuf,"CREATE_TASK") == 0)
+	{
+		iResult = run_CREATE_TASK(&clisock,recvbuf);
 		if (iResult != 0) break;
 	}
 	else {
