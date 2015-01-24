@@ -12,6 +12,7 @@
 #include <cppconn\prepared_statement.h>
 #include <sstream>
 #include "..\Util\metadataseparator.h"
+#include "BUILD.h"
 
 Task::Task(int TaskID) 
 {
@@ -79,9 +80,10 @@ int Task::proccess()
 		{
 			Tag city = util::SeparateTags(Metadata, 1);
 			Tag field = util::SeparateTags(Metadata, 2);
-
+			tasks::ProccessBuild(atoi(city.TagValue.c_str()),field.TagValue,TaskID);
 		}
 	}
+	delete Metadata;
 	return 0;
 }
 

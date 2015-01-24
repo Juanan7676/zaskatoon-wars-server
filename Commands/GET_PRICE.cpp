@@ -82,6 +82,10 @@ namespace
 			//End.
 			resultado = util::leer(clisock,recvbuf); if (resultado == 1) return 1;
 			if (strcmp(recvbuf,"OK") != 0) std::cout << "WARNING! No OK was received after sending prices. Client could have crashed!" << std::endl;
+			delete preciocobre;
+			delete preciohoras;
+			delete precioiron;
+			delete var5;
 		}
 		return 0;
 	}

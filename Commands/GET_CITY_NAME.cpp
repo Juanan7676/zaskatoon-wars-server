@@ -61,6 +61,7 @@ namespace
 		{
 			std::cout << "WARNING! Client didn't send an ok after sending City Name in GET_CITY_NAME. Could have crashed or disconnected." << std::endl;
 		}
+		delete enviar;
 		return 0;
 	}
 }

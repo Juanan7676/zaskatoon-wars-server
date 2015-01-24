@@ -13,6 +13,7 @@
 #include <sstream>
 #include <string>
 #include "..\Util\metadataseparator.h"
+#include "..\Proccessors\taskproc.h"
 
 void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 {
@@ -23,6 +24,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 	driver = sql::mysql::get_mysql_driver_instance();
 	conn = driver->connect("localhost","root","power500");
 	conn->setSchema("wars");
+	stmt = conn->createStatement();
 	std::stringstream comando;
 	char *var1 = new char[2];
 	memcpy(var1,field.c_str(),field.size());
@@ -40,8 +42,12 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		comando << "DELETE FROM tasks WHERE TaskID=" << TaskID;
 		stmt->executeUpdate(comando.str());
 		//Replace metadata with new building
-		std::string nmetadata;
-		if (var3.TagValue == "BOMBA_DE_AGUA") nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;";
+		std::string nmetadata; std::stringstream taskmetadata;
+		if (var3.TagValue == "BOMBA_DE_AGUA") 
+		{
+			nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;";
+			taskmetadata << "Type=Proccess;Building=BOMBA_DE_AGUA;City=" << cityID << ";Field=" << field << ";";
+		}
 		if (var3.TagValue == "PERFORADORA_PETROLEO") nmetadata ="Type=PERFORADORA_PETROLEO;Size=1;Remaining=100000;MJStored=0;";
 		if (var3.TagValue == "EXTRACCION_GAS") nmetadata = "Type=EXTRACCION_GAS;Size=1;Remaining=100000;MJStored=0;";
 		if (var3.TagValue == "MINA_COBRE") nmetadata = "Type=MINA_COBRE;Size=1;Remaining=750000;MJStored=0;";
@@ -53,7 +59,9 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		comando << "UPDATE city" << cityID << " SET Metadata='" << nmetadata << "' WHERE FieldX=" << var1[0] << " AND FieldY=" << var1[1];
 		stmt->executeUpdate(comando.str());
 		// Create new Task to proccess building
-
+		Task *newtask = new Task(taskmetadata.str());
+		newtask->push();
+		delete newtask;
 	}
 	else
 	{
@@ -63,4 +71,6 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		comando.str("");
 		comando << "UPDATE city" << cityID << " SET Metadata='" << compose.str() << "' WHERE FieldX=" << var1[0] << " AND FieldY=" << var1[1];
 	}
+	delete var1;
+	delete cadena;
 }

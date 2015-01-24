@@ -4,9 +4,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <stdlib.h>
-class registro
+namespace registro
 {
-public:
-	static int registre(SOCKET s);
-	
+	int registre(SOCKET s);	
 };
