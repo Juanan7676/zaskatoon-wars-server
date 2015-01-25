@@ -106,7 +106,7 @@ unsigned __stdcall ClientSession(void* data)
 	}
 	else if (strcmp(recvbuf,"CREATE_TASK") == 0)
 	{
-		iResult = run_CREATE_TASK(clisock,recvbuf);
+		iResult = run_CREATE_TASK(clisock,recvbuf,c);
 		if (iResult != 0) break;
 	}
 	else {
@@ -115,7 +115,6 @@ unsigned __stdcall ClientSession(void* data)
 		send(clisock,buff,sizeof(buff),0);
 	}
 	}
-delete data2;
 closesocket(clisock);
 --conn;
 cout << "Client disconnected/Ended communication with client. Current clients connected:" << conn << endl;

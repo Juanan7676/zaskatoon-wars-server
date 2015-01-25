@@ -94,18 +94,29 @@ Task::Task(std::string metadata)
 
 void Task::push()
 {
-	sql::Driver *driver;
-	sql::Connection *conn;
-	sql::Statement *stmt;
-	sql::ResultSet *rst;
-	driver = sql::mysql::get_mysql_driver_instance();
-	conn = driver->connect("localhost","root","power500");
-	conn->setSchema("wars");
-	stmt = conn->createStatement();
-	rst = stmt->executeQuery("SELECT TaskID FROM tasks ORDER BY TaskID DESC");
-	rst->first();
-	int ID = rst->getInt("TaskID") + 1;
-	std::stringstream comando;
-	comando << "INSERT INTO tasks VALUES (" << ID << ",'" << this->metadata << "')";
-	stmt->executeUpdate(comando.str());
+	try
+	{
+		sql::Driver *driver;
+		sql::Connection *conn;
+		sql::Statement *stmt;
+		sql::ResultSet *rst;
+		driver = sql::mysql::get_mysql_driver_instance();
+		conn = driver->connect("localhost","root","power500");
+		conn->setSchema("wars");
+		stmt = conn->createStatement();
+		rst = stmt->executeQuery("SELECT * FROM tasks ORDER BY TaskID DESC");
+		int ID;
+		if (rst->rowsCount() == 0) ID = 1;
+		else
+		{
+			rst->first();
+			ID = rst->getInt("TaskID") + 1;
+		}
+		std::stringstream comando;
+		comando << "INSERT INTO tasks VALUES (" << ID << ",'" << this->metadata << "')";
+		stmt->executeUpdate(comando.str());
+	} catch (sql::SQLException e)
+	{
+		std::cerr << "SQL Exception ocurred in push(): " << e.what() << std::endl;
+	}
 }

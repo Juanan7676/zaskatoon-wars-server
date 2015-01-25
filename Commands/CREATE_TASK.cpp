@@ -8,10 +8,12 @@
 #include "..\Util\read.h"
 #include "..\Util\CommandSeparator.h"
 #include "..\Util\metadataseparator.h"
+#include "..\Client.h"
+#include <iostream>
 
 namespace
 {
-	int run_CREATE_TASK(SOCKET clisock,char *recvbuf)
+	int run_CREATE_TASK(SOCKET clisock,char *recvbuf,Client c)
 	{
 		memset(recvbuf,0,255);
 		char ok[3] = "OK";
@@ -31,7 +33,7 @@ namespace
 			memcpy(metadatos,Word3.c_str(),Word3.size());
 			Tag building = util::SeparateTags(metadatos,0);
 			std::stringstream var1;
-			var1 << "Type=" << building.TagValue;
+			var1 << "Type=" << building.TagValue << ";";
 			Task newtask = Task(var1.str());
 			newtask.push();
 			delete metadatos;

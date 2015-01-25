@@ -1,30 +1,33 @@
 #include "metadataseparator.h"
 #include <sstream>
+#include <iostream>
 
 Tag util::SeparateTags(char *metadata,int index)
 {
-	char caracter = '\0'; int k=0; int StartTagName,EndTagName,StartTagValue,EndTagValue=0;
+	try
+	{
+	std::string tamanyo = metadata;
+	char caracter = '\0'; size_t k=0; int StartTagName,EndTagName,StartTagValue,EndTagValue=0;
 	for (int word=0;word <= index; word++)
 	{
 		StartTagName=k;
 		do
 		{
-			caracter = metadata[k];
 			k++;
-			if (k >= sizeof(*metadata)) throw 1;
-		} while (caracter != '=');
-		EndTagName=k;
+			if (k >= tamanyo.size()) throw 1;
+		} while (metadata[k] != '=');
+		EndTagName=k - 1;
 		StartTagValue = k + 1;
 		k++;
 	}
-	//All right, found the desired TagName. Let's find the end of the TagValue.
+	//All right, found the desired TagName. Let's find out the end of the TagValue.
 	do
 	{
-		k++;
 		caracter = metadata[k];
-		if (k >= sizeof(metadata)) throw 2;
+		k++;
+		if (k >= tamanyo.size()) throw 2;
 	} while (caracter != ';');
-	EndTagValue = k - 1;
+	EndTagValue = k - 2;
 	//Compose the return value
 	std::stringstream TagName,TagValue;
 	for (int pos=StartTagName;pos <= EndTagName;pos++)
@@ -40,4 +43,11 @@ Tag util::SeparateTags(char *metadata,int index)
 	taggy.TagName = TagName.str();
 	taggy.TagValue = TagValue.str();
 	return taggy;
+	}
+	catch (std::exception e)
+	{
+		std::cerr << "Error thrown at metadataseparator.cpp" << std::endl;
+		Tag taggy;
+		return taggy;
+	}
 }
