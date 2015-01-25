@@ -58,7 +58,7 @@ unsigned __stdcall ClientSession(void* data)
 	iResult = util::leer(clisock,recvbuf);
 	if (iResult == 1) break;
 	if (strcmp(recvbuf,"HI")==0) {
-		char buff[DEFAULT_BUFLEN]="WELCOME";
+		char buff[8]="WELCOME";
 		send(clisock,buff,sizeof(buff),0);
 	}
 	else if (strcmp(recvbuf,"BYE")==0) break;
@@ -115,6 +115,7 @@ unsigned __stdcall ClientSession(void* data)
 		send(clisock,buff,sizeof(buff),0);
 	}
 	}
+delete data2;
 closesocket(clisock);
 --conn;
 cout << "Client disconnected/Ended communication with client. Current clients connected:" << conn << endl;
@@ -188,7 +189,8 @@ int main() {
 		Client* c = new Client(clisock);
 		cout << "Client connected. #" << conn << endl;
         HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &ClientSession,(void*)c, 0, &threadID);
+		CloseHandle(hThread);
 		cout << "Current clients connected:" << conn << endl;
+		delete c;
 	}
-
 }
