@@ -46,7 +46,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		if (var3.TagValue == "BOMBA_DE_AGUA") 
 		{
 			nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;";
-			taskmetadata << "Type=Proccess;Building=BOMBA_DE_AGUA;City=" << cityID << ";Field=" << field << ";";
+			taskmetadata << "Type=Proccess;City=" << cityID << ";Field=" << field << ";";
 		}
 		if (var3.TagValue == "PERFORADORA_PETROLEO") nmetadata ="Type=PERFORADORA_PETROLEO;Size=1;Remaining=100000;MJStored=0;";
 		if (var3.TagValue == "EXTRACCION_GAS") nmetadata = "Type=EXTRACCION_GAS;Size=1;Remaining=100000;MJStored=0;";

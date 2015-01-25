@@ -11,7 +11,7 @@ Tag util::SeparateTags(char *metadata,int index)
 		{
 			caracter = metadata[k];
 			k++;
-			if (k >= sizeof(metadata)) throw 1;
+			if (k >= sizeof(*metadata)) throw 1;
 		} while (caracter != '=');
 		EndTagName=k;
 		StartTagValue = k + 1;
