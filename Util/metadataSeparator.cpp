@@ -19,15 +19,15 @@ Tag util::SeparateTags(char *metadata,int index)
 		EndTagName=k - 1;
 		StartTagValue = k + 1;
 		k++;
-	}
-	//All right, found the desired TagName. Let's find out the end of the TagValue.
-	do
-	{
-		caracter = metadata[k];
-		k++;
-		if (k >= tamanyo.size()) throw 2;
-	} while (caracter != ';');
+		do
+		{
+			caracter = metadata[k];
+			k++;
+			if (k >= tamanyo.size()) throw 2;
+		} while (caracter != ';');
 	EndTagValue = k - 2;
+	}
+	
 	//Compose the return value
 	std::stringstream TagName,TagValue;
 	for (int pos=StartTagName;pos <= EndTagName;pos++)

@@ -14,6 +14,7 @@
 #include <string>
 #include "..\Util\metadataseparator.h"
 #include "..\Proccessors\taskproc.h"
+#include "..\Util\LettertoNumber.h"
 
 void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 {
@@ -28,7 +29,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 	std::stringstream comando;
 	char *var1 = new char[2];
 	memcpy(var1,field.c_str(),field.size());
-	comando << "SELECT * FROM city" << cityID << " WHERE FieldX=" << var1[0] << " AND FieldY=" << var1[1];
+	comando << "SELECT * FROM city" << cityID << " WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 	rst = stmt->executeQuery(comando.str()); rst->first();
 	std::string Metadata = rst->getString("Metadata");
 	char *cadena = new char[255];
@@ -56,7 +57,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 			TODO: More buildings...
 		*/
 		comando.str("");
-		comando << "UPDATE city" << cityID << " SET Metadata='" << nmetadata << "' WHERE FieldX=" << var1[0] << " AND FieldY=" << var1[1];
+		comando << "UPDATE city" << cityID << " SET Metadata='" << nmetadata << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 		stmt->executeUpdate(comando.str());
 		// Create new Task to proccess building
 		Task *newtask = new Task(taskmetadata.str());
@@ -69,7 +70,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		int time = atoi(var2.TagValue.c_str());
 		compose << "Building=" << var3.TagValue << ";RemainingTime=" << time - 1;
 		comando.str("");
-		comando << "UPDATE city" << cityID << " SET Metadata='" << compose.str() << "' WHERE FieldX=" << var1[0] << " AND FieldY=" << var1[1];
+		comando << "UPDATE city" << cityID << " SET Metadata='" << compose.str() << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 	}
 	delete var1;
 	delete cadena;

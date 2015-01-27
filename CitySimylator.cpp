@@ -35,7 +35,7 @@ unsigned __stdcall CitySimulator::StartThread(void* data)
 			std::stringstream comando;
 			rst = stmt->executeQuery("SELECT * FROM tasks");
 			rst->first();
-			if (rst->next())
+			if (rst->rowsCount() != 0)
 			{
 				rst->first();
 				do

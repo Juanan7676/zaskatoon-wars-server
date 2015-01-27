@@ -76,7 +76,7 @@ int Task::proccess()
 	Tag tag = util::SeparateTags(Metadata, 0);
 	if (tag.TagName == "Type")
 	{
-		if (tag.TagValue == "BUILD")
+		if (tag.TagValue == "Build")
 		{
 			Tag city = util::SeparateTags(Metadata, 1);
 			Tag field = util::SeparateTags(Metadata, 2);
