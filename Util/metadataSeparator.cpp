@@ -48,6 +48,8 @@ Tag util::SeparateTags(char *metadata,int index)
 	{
 		std::cerr << "Error thrown at metadataseparator.cpp" << std::endl;
 		Tag taggy;
+		taggy.TagName = "#ERROR#";
+		taggy.TagValue = "#ERROR#";
 		return taggy;
 	}
 }
