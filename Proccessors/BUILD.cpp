@@ -12,9 +12,9 @@
 #include <cppconn\prepared_statement.h>
 #include <sstream>
 #include <string>
-#include "..\Util\metadataseparator.h"
 #include "..\Proccessors\taskproc.h"
 #include "..\Util\LettertoNumber.h"
+#include "..\Util\ChangeMetadataValue.h"
 
 void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 {
@@ -66,12 +66,24 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 	}
 	else
 	{
-		std::stringstream compose;
 		int time = atoi(var2.TagValue.c_str());
-		compose << "Building=" << var3.TagValue << ";RemainingTime=" << time - 1;
-		comando.str("");
-		comando << "UPDATE city" << cityID << " SET Metadata='" << compose.str() << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
+		TagList t;
+		t.reserve(5);
+		Tag current;
+		int k=0;
+		while (1)
+		{
+			current = util::SeparateTags(cadena,k);
+			if (current.TagValue == "#ERROR#") break;
+			if (current.TagName == "RemainingTime") current.TagValue=time-1;
+			t[k] = current;
+			k++;
+		}
+		util::changemetadata(cadena,t);
+		std::string compose = cadena;
+		comando << "UPDATE city" << cityID << " SET Metadata='" << compose << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
+		stmt->executeUpdate(comando.str());
 	}
-	delete var1;
-	delete cadena;
+	delete[] var1;
+	delete[] cadena;
 }

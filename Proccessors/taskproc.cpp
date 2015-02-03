@@ -83,7 +83,7 @@ int Task::proccess()
 			tasks::ProccessBuild(atoi(city.TagValue.c_str()),field.TagValue,TaskID);
 		}
 	}
-	delete Metadata;
+	delete[] Metadata;
 	return 0;
 }
 
