@@ -70,13 +70,14 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		TagList t;
 		t.reserve(5);
 		Tag current;
-		int k=0;
+		size_t k=0;
 		while (1)
 		{
 			current = util::SeparateTags(cadena,k);
 			if (current.TagValue == "#ERROR#") break;
 			if (current.TagName == "RemainingTime") current.TagValue=time-1;
-			t[k] = current;
+			if (k > t.capacity()) t.push_back(current);
+			else t[k] = current;
 			k++;
 		}
 		util::changemetadata(cadena,t);
