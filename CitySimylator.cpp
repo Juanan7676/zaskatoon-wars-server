@@ -57,9 +57,13 @@ unsigned __stdcall CitySimulator::StartThread(void* data)
 		std::cerr << "Se ha producido una excepcion SQL: " << e.what() << std::endl;
 		return 0;
 	}
+	catch (std::out_of_range out)
+	{
+		std::cerr << "Excepcion: " << out.what() << std::endl;
+	}
 	catch (std::exception e)
 	{
-		std::cerr << "Se ha producido una excepcion: " << e.what() << std::endl;
+		std::cerr << "Se ha producido una excepcion en CitySimylator.cpp: " << e.what() << std::endl;
 		return 0;
 	}
 	return 0;

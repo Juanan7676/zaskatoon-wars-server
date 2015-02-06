@@ -4,8 +4,8 @@
 
 Tag util::SeparateTags(char *metadata,int index)
 {
-	try
-	{
+	Tag taggy;
+	std::stringstream TagName,TagValue;
 	std::string tamanyo = metadata;
 	char caracter = '\0'; size_t k=0; int StartTagName,EndTagName,StartTagValue,EndTagValue=0;
 	for (int word=0;word <= index; word++)
@@ -14,7 +14,7 @@ Tag util::SeparateTags(char *metadata,int index)
 		do
 		{
 			k++;
-			if (k >= tamanyo.size()) throw 1;
+			if (k >= tamanyo.size()) goto fail;
 		} while (metadata[k] != '=');
 		EndTagName=k - 1;
 		StartTagValue = k + 1;
@@ -23,13 +23,12 @@ Tag util::SeparateTags(char *metadata,int index)
 		{
 			caracter = metadata[k];
 			k++;
-			if (k >= tamanyo.size()) throw 2;
+			if (k >= tamanyo.size()) goto fail;
 		} while (caracter != ';');
 	EndTagValue = k - 2;
 	}
 	
 	//Compose the return value
-	std::stringstream TagName,TagValue;
 	for (int pos=StartTagName;pos <= EndTagName;pos++)
 	{
 		TagName << metadata[pos];
@@ -39,17 +38,11 @@ Tag util::SeparateTags(char *metadata,int index)
 		TagValue << metadata[pos];
 	}
 	//Return the Tag object
-	Tag taggy;
 	taggy.TagName = TagName.str();
 	taggy.TagValue = TagValue.str();
 	return taggy;
-	}
-	catch (std::exception e)
-	{
-		std::cerr << "Error thrown at metadataseparator.cpp" << std::endl;
-		Tag taggy;
-		taggy.TagName = "#ERROR#";
-		taggy.TagValue = "#ERROR#";
-		return taggy;
-	}
+fail:
+	taggy.TagName = "#ERROR#";
+	taggy.TagValue = "#ERROR#";
+	return taggy;
 }

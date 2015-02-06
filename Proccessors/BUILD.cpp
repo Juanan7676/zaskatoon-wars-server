@@ -32,8 +32,10 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 	comando << "SELECT * FROM city" << cityID << " WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 	rst = stmt->executeQuery(comando.str()); rst->first();
 	std::string Metadata = rst->getString("Metadata");
-	char *cadena = new char[255];
+	char *cadena = new char[Metadata.size() + 1];
+	memset(cadena,0,Metadata.size());
 	memcpy(cadena,Metadata.c_str(),Metadata.size());
+	cadena[Metadata.size()] = '\0';
 	Tag var3 = util::SeparateTags(cadena,0);
 	Tag var2 = util::SeparateTags(cadena,1);
 	if (var2.TagValue == "1")
@@ -67,21 +69,23 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 	else
 	{
 		int time = atoi(var2.TagValue.c_str());
+		time--;
+		std::stringstream tmp;
+		tmp << time;
 		TagList t;
-		t.reserve(5);
 		Tag current;
 		size_t k=0;
 		while (1)
 		{
 			current = util::SeparateTags(cadena,k);
 			if (current.TagValue == "#ERROR#") break;
-			if (current.TagName == "RemainingTime") current.TagValue=time-1;
-			if (k > t.capacity()) t.push_back(current);
-			else t[k] = current;
+			if (current.TagName == "RemainingTime") current.TagValue=tmp.str();
+			t.push_back(current);
 			k++;
 		}
 		util::changemetadata(cadena,t);
 		std::string compose = cadena;
+		comando.str("");
 		comando << "UPDATE city" << cityID << " SET Metadata='" << compose << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 		stmt->executeUpdate(comando.str());
 	}
