@@ -2,7 +2,10 @@
 
 namespace tasks
 {
-	
+	namespace buildings
+	{
+
+	};
 };
 class Task
 {

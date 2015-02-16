@@ -46,11 +46,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		stmt->executeUpdate(comando.str());
 		//Replace metadata with new building
 		std::string nmetadata; std::stringstream taskmetadata;
-		if (var3.TagValue == "BOMBA_DE_AGUA") 
-		{
-			nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;";
-			taskmetadata << "Type=Proccess;City=" << cityID << ";Field=" << field << ";";
-		}
+		if (var3.TagValue == "BOMBA_DE_AGUA") nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;WaterStored=0;";
 		if (var3.TagValue == "PERFORADORA_PETROLEO") nmetadata ="Type=PERFORADORA_PETROLEO;Size=1;Remaining=100000;MJStored=0;";
 		if (var3.TagValue == "EXTRACCION_GAS") nmetadata = "Type=EXTRACCION_GAS;Size=1;Remaining=100000;MJStored=0;";
 		if (var3.TagValue == "MINA_COBRE") nmetadata = "Type=MINA_COBRE;Size=1;Remaining=750000;MJStored=0;";
@@ -58,6 +54,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		/*
 			TODO: More buildings...
 		*/
+		taskmetadata << "Type=Proccess;Building=" << var3.TagValue << "City=" << cityID << ";Field=" << field << ";";
 		comando.str("");
 		comando << "UPDATE city" << cityID << " SET Metadata='" << nmetadata << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 		stmt->executeUpdate(comando.str());
@@ -91,4 +88,43 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 	}
 	delete[] var1;
 	delete[] cadena;
+}
+
+void tasks::CreateBuild(std::string Word1,std::string Word2,std::string Word3,std::string Word4,std::string Word5,Client c)
+{
+	char *metadatos = new char[255];
+			memcpy(metadatos,Word3.c_str(),Word3.size());
+			Tag building = util::SeparateTags(metadatos,0);
+			std::stringstream var1;
+			var1 << "Type=Build;City=" << c.getCurrentCityID() << ";Field=" << Word1 << ";";
+			Task newtask = Task(var1.str());
+			newtask.push();
+			try
+			{
+				sql::Driver *driver;
+				sql::Connection *conn;
+				sql::Statement *stmt;
+				sql::ResultSet *rst;
+				driver = sql::mysql::get_mysql_driver_instance();
+				conn = driver->connect("localhost","root","power500");
+				conn->setSchema("wars");
+				stmt = conn->createStatement();
+				var1.str("");
+				var1 << "SELECT * FROM prices WHERE Valor='" << building.TagValue << "'";
+				rst = stmt->executeQuery(var1.str());
+				rst->first();
+				std::stringstream comando;
+				char *var2 = new char[2];
+				memcpy(var2,Word1.c_str(),2);
+				comando << "UPDATE city" << c.getCurrentCityID() << " SET Metadata='Building=" << building.TagValue << ";RemainingTime=" << rst->getInt("time") << ";MJStored=0;MJRemaining=" << rst->getInt("MJ") << ";' WHERE FieldX=" << util::lton(var2[0]) << " AND FieldY=" << var2[1];
+				stmt->executeUpdate(comando.str());
+				comando.str("");
+				comando << "UPDATE city" << c.getCurrentCityID() << " SET Type='EDIFICIO' WHERE FieldX=" << util::lton(var2[0]) << " AND FieldY=" << var2[1];
+				stmt->executeUpdate(comando.str());
+				delete var2;
+			} catch (sql::SQLException e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+			delete metadatos;
 }
