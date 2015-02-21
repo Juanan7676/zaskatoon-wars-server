@@ -121,11 +121,14 @@ cout << "Client disconnected/Ended communication with client. Current clients co
 return 0;
 }
 int main() {
+	bool *simulation = new bool(false);
+	//Start city simulation thread
 	unsigned CitySimulatorThread;
-	HANDLE h = (HANDLE)_beginthreadex(NULL,0,&CitySimulator::StartThread,NULL,0,&CitySimulatorThread);
+	HANDLE h = (HANDLE)_beginthreadex(NULL,0,&CitySimulator::StartThread,(void*)simulation,0,&CitySimulatorThread);
 	WSADATA wsaData;
+	//Start separate thread for command-line
 	unsigned CommandLineThread;
-	HANDLE hh = (HANDLE)_beginthreadex(NULL,0,&CommandLine::main,NULL,0,&CommandLineThread);
+	HANDLE hh = (HANDLE)_beginthreadex(NULL,0,&CommandLine::main,(void*)simulation,0,&CommandLineThread);
     int iResult;
     SOCKET sock = INVALID_SOCKET;
     SOCKET clisock = INVALID_SOCKET;

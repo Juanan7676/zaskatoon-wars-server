@@ -14,9 +14,11 @@
 #include <cppconn\prepared_statement.h>
 #include <sstream>
 #include "Proccessors\taskproc.h"
+#include <iostream>
 
 unsigned __stdcall CitySimulator::StartThread(void* data)
 {
+	bool *simulate = (bool *)data;
 	try
 	{
 		time_t stamp = time(NULL);
@@ -24,6 +26,7 @@ unsigned __stdcall CitySimulator::StartThread(void* data)
 		errno_t err = localtime_s(&tiempo,&stamp);
 		while(1) //Must add a "stop simulation" and command-line in main thread. Pointer to a bool variable (data) and when it is true, exit loop.
 		{
+			std::cout << "[City Simulator] Simulation Started." << std::endl;
 			sql::Driver *driver;
 			sql::Connection *conn;
 			sql::Statement *stmt;
@@ -49,6 +52,11 @@ unsigned __stdcall CitySimulator::StartThread(void* data)
 			{
 				Sleep(1000);
 				minuto = tiempo.tm_min;
+				if (*simulate == true)
+				{
+					*simulate = false;
+					break;
+				}
 			} while (minuto != 0); //Check for next update
 		}
 	}
