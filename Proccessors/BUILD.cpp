@@ -46,7 +46,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		stmt->executeUpdate(comando.str());
 		//Replace metadata with new building
 		std::string nmetadata; std::stringstream taskmetadata;
-		if (var3.TagValue == "BOMBA_DE_AGUA") nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;WaterStored=0;";
+		if (var3.TagValue == "BOMBA_DE_AGUA") nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;StoredWater=0;";
 		if (var3.TagValue == "PERFORADORA_PETROLEO") nmetadata ="Type=PERFORADORA_PETROLEO;Size=1;Remaining=100000;MJStored=0;";
 		if (var3.TagValue == "EXTRACCION_GAS") nmetadata = "Type=EXTRACCION_GAS;Size=1;Remaining=100000;MJStored=0;";
 		if (var3.TagValue == "MINA_COBRE") nmetadata = "Type=MINA_COBRE;Size=1;Remaining=750000;MJStored=0;";
@@ -54,7 +54,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		/*
 			TODO: More buildings...
 		*/
-		taskmetadata << "Type=Proccess;Building=" << var3.TagValue << "City=" << cityID << ";Field=" << field << ";";
+		taskmetadata << "Type=Proccess;Building=" << var3.TagValue << ";City=" << cityID << ";Field=" << field << ";";
 		comando.str("");
 		comando << "UPDATE city" << cityID << " SET Metadata='" << nmetadata << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 		stmt->executeUpdate(comando.str());
@@ -110,7 +110,12 @@ void tasks::CreateBuild(std::string Word1,std::string Word2,std::string Word3,st
 				conn->setSchema("wars");
 				stmt = conn->createStatement();
 				var1.str("");
-				var1 << "SELECT * FROM prices WHERE Valor='" << building.TagValue << "'";
+				if (building.TagValue == "MINA_HIERRO" || building.TagValue == "MINA_COBRE") 
+				{
+					std::string edificio = "MINA";
+					var1 << "SELECT * FROM prices WHERE Valor='" << edificio << "'";
+				}
+				else var1 << "SELECT * FROM prices WHERE Valor='" << building.TagValue << "'";
 				rst = stmt->executeQuery(var1.str());
 				rst->first();
 				std::stringstream comando;

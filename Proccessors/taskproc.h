@@ -1,12 +1,6 @@
+#pragma once
 #include <string>
 
-namespace tasks
-{
-	namespace buildings
-	{
-
-	};
-};
 class Task
 {
 public:

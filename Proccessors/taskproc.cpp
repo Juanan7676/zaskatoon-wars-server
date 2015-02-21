@@ -13,6 +13,10 @@
 #include <sstream>
 #include "..\Util\metadataseparator.h"
 #include "BUILD.h"
+#include "Buildings\PERFORADORA_PETROLEO\Proccess_PERFORADORA.h"
+#include "Buildings\BOMBA_DE_AGUA\Proccess_BOMBA.h"
+#include "Buildings\MINA_COBRE\Proccess_MINA_COBRE.h"
+#include "Buildings\MINA_HIERRO\Proccess_MINA_HIERRO.h"
 
 Task::Task(int TaskID) 
 {
@@ -82,6 +86,30 @@ int Task::proccess()
 			Tag field = util::SeparateTags(Metadata, 2);
 			tasks::ProccessBuild(atoi(city.TagValue.c_str()),field.TagValue,TaskID);
 		}
+		if (tag.TagValue == "Proccess")
+		{
+			Tag city = util::SeparateTags(Metadata, 2);
+			Tag field = util::SeparateTags(Metadata, 3);
+			Tag building = util::SeparateTags(Metadata, 1);
+			if (building.TagValue == "BOMBA_DE_AGUA")
+			{
+				tasks::buildings::proccess_BOMBA_DE_AGUA(atoi(city.TagValue.c_str()),field.TagValue);
+			}
+			if (building.TagValue == "PERFORADORA_PETROLEO")
+			{
+				tasks::buildings::proccess_PERFORADORA_PETROLEO(atoi(city.TagValue.c_str()),field.TagValue);
+			}
+			if (building.TagValue == "MINA_COBRE")
+			{
+				tasks::buildings::proccess_MINA_COBRE(atoi(city.TagValue.c_str()),field.TagValue);
+			}
+			if (building.TagValue == "MINA_HIERRO")
+			{
+				tasks::buildings::proccess_MINA_HIERRO(atoi(city.TagValue.c_str()),field.TagValue);
+			}
+			// TODO: More buildings
+		}
+		// TODO: More tasks
 	}
 	delete[] Metadata;
 	return 0;
