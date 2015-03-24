@@ -60,7 +60,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		stmt->executeUpdate(comando.str());
 		// Create new Task to proccess building
 		Task *newtask = new Task(taskmetadata.str());
-		newtask->push();
+		newtask->push(0);
 		delete newtask;
 	}
 	else
@@ -98,7 +98,7 @@ void tasks::CreateBuild(std::string Word1,std::string Word2,std::string Word3,st
 			std::stringstream var1;
 			var1 << "Type=Build;City=" << c.getCurrentCityID() << ";Field=" << Word1 << ";";
 			Task newtask = Task(var1.str());
-			newtask.push();
+			newtask.push(0);
 			try
 			{
 				sql::Driver *driver;

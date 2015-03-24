@@ -15,6 +15,7 @@
 #include <sstream>
 #include "Proccessors\taskproc.h"
 #include <iostream>
+#include <sstream>
 
 unsigned __stdcall CitySimulator::StartThread(void* data)
 {
@@ -24,7 +25,7 @@ unsigned __stdcall CitySimulator::StartThread(void* data)
 		time_t stamp = time(NULL);
 		struct tm tiempo;
 		errno_t err = localtime_s(&tiempo,&stamp);
-		while(1) //Must add a "stop simulation" and command-line in main thread. Pointer to a bool variable (data) and when it is true, exit loop.
+		while(1)
 		{
 			std::cout << "[City Simulator] Simulation Started." << std::endl;
 			sql::Driver *driver;
@@ -36,16 +37,22 @@ unsigned __stdcall CitySimulator::StartThread(void* data)
 			conn->setSchema("wars");
 			stmt = conn->createStatement();
 			std::stringstream comando;
-			rst = stmt->executeQuery("SELECT * FROM tasks");
-			rst->first();
-			if (rst->rowsCount() != 0)
+			for (int priority=0;priority <= 3; priority++)
 			{
+				std::stringstream comando;
+				comando << "SELECT * FROM tasks WHERE PRIORITY=" << priority;
+				rst = stmt->executeQuery(comando.str());
+				comando.str("");
 				rst->first();
-				do
+				if (rst->rowsCount() != 0)
 				{
-					Task task = Task(rst->getInt("TaskID"));
-					task.proccess();
-				} while (rst->next());
+					rst->first();
+					do
+					{
+						Task task = Task(rst->getInt("TaskID"));
+						task.proccess();
+					} while (rst->next());
+				}
 			}
 			int minuto;
 			do
