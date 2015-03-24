@@ -1,15 +1,5 @@
 #include "BUILD.h"
-#include <mysql_connection.h>
-#include <mysql_driver.h>
-#include <cppconn\driver.h>
-#include <cppconn\connection.h>
-#include <cppconn\build_config.h>
-#include <cppconn\config.h>
-#include <cppconn\datatype.h>
-#include <cppconn\statement.h>
-#include <cppconn\resultset.h>
-#include <cppconn\exception.h>
-#include <cppconn\prepared_statement.h>
+#include "..\Common\SQL.h"
 #include <sstream>
 #include <string>
 #include "..\Proccessors\taskproc.h"
@@ -47,10 +37,11 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		//Replace metadata with new building
 		std::string nmetadata; std::stringstream taskmetadata;
 		if (var3.TagValue == "BOMBA_DE_AGUA") nmetadata = "Type=BOMBA_DE_AGUA;Size=1;Remaining=10000;MJStored=0;StoredWater=0;";
-		if (var3.TagValue == "PERFORADORA_PETROLEO") nmetadata ="Type=PERFORADORA_PETROLEO;Size=1;Remaining=100000;MJStored=0;";
-		if (var3.TagValue == "EXTRACCION_GAS") nmetadata = "Type=EXTRACCION_GAS;Size=1;Remaining=100000;MJStored=0;";
-		if (var3.TagValue == "MINA_COBRE") nmetadata = "Type=MINA_COBRE;Size=1;Remaining=750000;MJStored=0;";
-		if (var3.TagValue == "MINA_HIERRO") nmetadata = "Type=MINA_HIERRO;Size=1;Remaining=750000;MJStored=0;";
+		if (var3.TagValue == "PERFORADORA_PETROLEO") nmetadata ="Type=PERFORADORA_PETROLEO;Size=1;Remaining=100000;MJStored=0;StoredOil=0";
+		if (var3.TagValue == "EXTRACCION_GAS") nmetadata = "Type=EXTRACCION_GAS;Size=1;Remaining=100000;MJStored=0;StoredGas=0";
+		if (var3.TagValue == "MINA_COBRE") nmetadata = "Type=MINA_COBRE;Size=1;Remaining=750000;MJStored=0;StoredCopper=0";
+		if (var3.TagValue == "MINA_HIERRO") nmetadata = "Type=MINA_HIERRO;Size=1;Remaining=750000;MJStored=0;StoredIron=0";
+		if (var3.TagValue == "CENTRAL_HIDROELECTRICA") nmetadata = "Type=CENTRAL_HIDROELECTRICA;EffUpgrades=0;CapUpgrades=0;StoredWater=0;MJStored=0;";
 		/*
 			TODO: More buildings...
 		*/
@@ -126,10 +117,10 @@ void tasks::CreateBuild(std::string Word1,std::string Word2,std::string Word3,st
 				comando.str("");
 				comando << "UPDATE city" << c.getCurrentCityID() << " SET Type='EDIFICIO' WHERE FieldX=" << util::lton(var2[0]) << " AND FieldY=" << var2[1];
 				stmt->executeUpdate(comando.str());
-				delete var2;
+				delete[] var2;
 			} catch (sql::SQLException e)
 			{
 				std::cerr << e.what() << std::endl;
 			}
-			delete metadatos;
+			delete[] metadatos;
 }
