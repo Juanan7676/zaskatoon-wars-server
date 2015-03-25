@@ -83,6 +83,7 @@ void tasks::ProccessEnergy(Building origen, Building destino)
 		comando.str("");
 		comando << "UPDATE city" << destino.City << " SET Metadata='" << mDestino << "' WHERE FieldX=" << destino.PosX << " AND FieldY=" << destino.PosY;
 		stmt->executeUpdate(comando.str());
+		std::cout << "[City Simulator] Transporte de energia finalizado. Edificio 1: Ciudad " << origen.City << ", X:" << origen.PosX << ", Y:" << origen.PosY << ". Edificio 2: Ciudad " << destino.City << ", X:" << destino.PosX << ", Y:" << destino.PosY << ". Energia transportada:" << MJToAdd << " MJ (con descuento)" << std::endl;
 		delete[] cOrigen;
 		delete[] cDestino;
 	}

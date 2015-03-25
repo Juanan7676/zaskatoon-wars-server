@@ -45,10 +45,11 @@ void tasks::buildings::proccess_MINA_HIERRO(int CityID,std::string Field)
 	int CurrentCopper = atoi(Stored.TagValue.c_str());
 	CurrentCopper += sacarCobre;
 	std::stringstream nuevo;
-	nuevo << "Type=PERFORADORA_PETROLEO;Size=" << atoi(size.TagValue.c_str()) << ";Remaining=" << RemainingCopper - sacarCobre << ";MJStored=" << CurrentMJint << ";StoredCopper=" << CurrentCopper << ";";
+	nuevo << "Type=PERFORADORA_PETROLEO;Size=" << atoi(size.TagValue.c_str()) << ";Remaining=" << RemainingCopper - sacarCobre << ";MJStored=" << CurrentMJint << ";StoredIron=" << CurrentCopper << ";";
 	std::stringstream comando;
 	comando << "UPDATE city" << CityID << " SET Metadata='" << nuevo.str() << "' WHERE FieldX=" << FieldX << " AND FieldY=" << FieldY;
 	stmt->executeUpdate(comando.str());
+	std::cout << "[City Simulator] Mina de hierro procesada. " << sacarCobre << " unidades de hierro fueron extraidas, quedando " << RemainingCopper << " unidades de hierro en el yacimiento." << std::endl;
 	delete[] fields;
 	delete[] metadatac;
 }

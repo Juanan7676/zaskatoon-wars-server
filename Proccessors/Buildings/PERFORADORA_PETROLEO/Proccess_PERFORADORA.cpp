@@ -60,6 +60,7 @@ void tasks::buildings::proccess_PERFORADORA_PETROLEO(int CityID,std::string Fiel
 	std::stringstream comando;
 	comando << "UPDATE city" << CityID << " SET Metadata='" << nuevo.str() << "' WHERE FieldX=" << FieldX << " AND FieldY=" << FieldY;
 	stmt->executeUpdate(comando.str());
+	std::cout << "[City Simulator] Perforadora de petroleo procesada. " << sacarOil << " unidades de petroleo fueron extraidas, quedando " << RemainingWater << " unidades de petroleo en el yacimiento." << std::endl;
 	delete[] fields;
 	delete[] metadatac;
 }

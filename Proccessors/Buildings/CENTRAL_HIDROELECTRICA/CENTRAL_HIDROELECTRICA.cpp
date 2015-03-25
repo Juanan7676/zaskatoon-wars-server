@@ -48,6 +48,7 @@ void tasks::buildings::proccess_central_hidroelectrica(Building b)
 		comando.str("");
 		comando << "UPDATE city" << b.City << " SET Metadata='" << metadata << "' WHERE FieldX=" << b.PosX << " AND FieldY=" << b.PosY;
 		stmt->executeUpdate(comando.str());
+		std::cout << "[City Simulator] Central hidroelectrica procesada. Se produjeron " << ProducedMJ << " MJ a costa de " << WaterToConsume << " unidades de agua." << std::endl;
 		delete[] metadata;
 	}
 	catch (std::out_of_range e)

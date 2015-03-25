@@ -53,6 +53,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		Task *newtask = new Task(taskmetadata.str());
 		newtask->push(0);
 		delete newtask;
+		std::cout << "[City Simulator] Construccion completada. Un nuevo edificio del tipo " << var3.TagValue << " ha sido creado en la ciudad " << cityID << "." << std::endl;
 	}
 	else
 	{
@@ -76,6 +77,7 @@ void tasks::ProccessBuild(int cityID,std::string field,int TaskID)
 		comando.str("");
 		comando << "UPDATE city" << cityID << " SET Metadata='" << compose << "' WHERE FieldX=" << util::lton(var1[0]) << " AND FieldY=" << var1[1];
 		stmt->executeUpdate(comando.str());
+		std::cout << "[City Simulator] Construccion procesada. Ciudad: " << cityID << ", quedan " << time << " recalculos para la finalizacion." << std::endl;
 	}
 	delete[] var1;
 	delete[] cadena;

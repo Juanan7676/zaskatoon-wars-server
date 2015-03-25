@@ -49,6 +49,7 @@ void tasks::buildings::proccess_MINA_COBRE(int CityID,std::string Field)
 	std::stringstream comando;
 	comando << "UPDATE city" << CityID << " SET Metadata='" << nuevo.str() << "' WHERE FieldX=" << FieldX << " AND FieldY=" << FieldY;
 	stmt->executeUpdate(comando.str());
+	std::cout << "[City Simulator] Mina de cobre procesada. " << sacarCobre << " unidades de cobre fueron extraidas, quedando " << RemainingCopper << " unidades de cobre en el yacimiento." << std::endl;
 	delete[] fields;
 	delete[] metadatac;
 }

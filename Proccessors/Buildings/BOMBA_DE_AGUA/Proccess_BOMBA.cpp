@@ -49,6 +49,7 @@ void tasks::buildings::proccess_BOMBA_DE_AGUA(int CityID,std::string Field)
 	std::stringstream comando;
 	comando << "UPDATE city" << CityID << " SET Metadata='" << nuevo.str() << "' WHERE FieldX=" << FieldX << " AND FieldY=" << FieldY;
 	stmt->executeUpdate(comando.str());
+	std::cout << "[City Simulator] Bomba de agua procesada. " << sacarAgua << " unidades de agua fueron extraidas, quedando " << RemainingWater << " unidades de agua en el yacimiento." << std::endl;
 	delete[] fields;
 	delete[] metadatac;
 }
