@@ -30,8 +30,16 @@ namespace
 	int run_CREATE_TASK(SOCKET clisock,char *recvbuf,Client c)
 	{
 		memset(recvbuf,0,255);
-		char ok[3] = "OK";
-		send(clisock,ok,3,0);
+		if (!c.isLogged())
+		{
+			char error[17] = "ERROR_NOT_LOGGED";
+			send(clisock,error,17,0);
+		}
+		else
+		{
+			char ok[3] = "OK";
+			send(clisock,ok,3,0);
+		}
 		int iResult = util::leer(clisock,recvbuf);
 		if (iResult != 0) return 1;
 		std::string comando = recvbuf;
@@ -45,6 +53,7 @@ namespace
 		/*
 		TODO : More tasks
 		*/
+		char ok[3] = "OK";
 		send(clisock,ok,3,0);
 		return 0;
 	}
