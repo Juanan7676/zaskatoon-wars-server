@@ -148,7 +148,7 @@ void Task::push(int priority)
 			ID = rst->getInt("TaskID") + 1;
 		}
 		std::stringstream comando;
-		comando << "INSERT INTO tasks VALUES (" << ID << "," << priority << "'" << this->metadata << "')";
+		comando << "INSERT INTO tasks VALUES (" << ID << "," << priority << ",'" << this->metadata << "')";
 		stmt->executeUpdate(comando.str());
 	} catch (sql::SQLException e)
 	{
