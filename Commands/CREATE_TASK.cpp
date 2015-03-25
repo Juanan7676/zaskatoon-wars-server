@@ -34,6 +34,7 @@ namespace
 		{
 			char error[17] = "ERROR_NOT_LOGGED";
 			send(clisock,error,17,0);
+			return 1;
 		}
 		else
 		{
