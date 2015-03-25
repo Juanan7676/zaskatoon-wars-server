@@ -1,14 +1,4 @@
-#include <mysql_connection.h>
-#include <mysql_driver.h>
-#include <cppconn\driver.h>
-#include <cppconn\connection.h>
-#include <cppconn\build_config.h>
-#include <cppconn\config.h>
-#include <cppconn\datatype.h>
-#include <cppconn\statement.h>
-#include <cppconn\resultset.h>
-#include <cppconn\exception.h>
-#include <cppconn\prepared_statement.h>
+#include "..\Common\SQL.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winsock2.h>
