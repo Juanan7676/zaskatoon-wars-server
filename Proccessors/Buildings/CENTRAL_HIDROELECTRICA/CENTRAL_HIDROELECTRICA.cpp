@@ -28,7 +28,7 @@ void tasks::buildings::proccess_central_hidroelectrica(Building b)
 		metadata[rst->getString("Metadata").size() + 1] = '\0';
 		int markMJ,markWater,markUp1,markUp2=0;
 		TagList t;
-		for (int k=0;t.at(k).TagValue != "#ERROR#"; ++t)
+		for (int k=0;t.at(k).TagValue != "#ERROR#"; ++k)
 		{
 			t.push_back(util::SeparateTags(metadata,k));
 			if (t.at(k).TagName == "MJStored") markMJ = k;

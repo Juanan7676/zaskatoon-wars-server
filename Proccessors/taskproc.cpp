@@ -7,6 +7,7 @@
 #include "Buildings\BOMBA_DE_AGUA\Proccess_BOMBA.h"
 #include "Buildings\MINA_COBRE\Proccess_MINA_COBRE.h"
 #include "Buildings\MINA_HIERRO\Proccess_MINA_HIERRO.h"
+#include "Buildings\CENTRAL_HIDROELECTRICA\CENTRAL_HIDROELECTRICA.h"
 
 Task::Task(int TaskID) 
 {
@@ -79,8 +80,19 @@ int Task::proccess()
 		if (tag.TagValue == "Proccess")
 		{
 			Tag city = util::SeparateTags(Metadata, 2);
-			Tag field = util::SeparateTags(Metadata, 3);
+			Tag field = util::SeparateTags(Metadata, 3); 
+			char *cfield = new char[2]; 
+			memcpy(cfield,field.TagValue.c_str(),field.TagValue.size());
+			std::stringstream X;
+			X << cfield[0];
+			std::stringstream Y;
+			Y << cfield[1];
 			Tag building = util::SeparateTags(Metadata, 1);
+			Building b;
+			b.City = atoi(city.TagValue.c_str());
+			b.metadata = Metadata;
+			b.PosX = atoi(X.str().c_str());
+			b.PosY = atoi(Y.str().c_str());
 			if (building.TagValue == "BOMBA_DE_AGUA")
 			{
 				tasks::buildings::proccess_BOMBA_DE_AGUA(atoi(city.TagValue.c_str()),field.TagValue);
@@ -97,7 +109,12 @@ int Task::proccess()
 			{
 				tasks::buildings::proccess_MINA_HIERRO(atoi(city.TagValue.c_str()),field.TagValue);
 			}
+			if (building.TagValue == "CENTRAL_HIDROELECTRICA")
+			{
+				tasks::buildings::proccess_central_hidroelectrica(b);
+			}
 			// TODO: More buildings
+			delete[] cfield;
 		}
 		// TODO: More tasks
 	}
