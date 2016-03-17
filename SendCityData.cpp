@@ -19,6 +19,7 @@
 char buffer[255];
 int leerr2(SOCKET s)
 {
+	std::cout << "Hola";
 	SOCKET clisock=s;
 	int iResult;
 	int bufferlen=sizeof(buffer);
